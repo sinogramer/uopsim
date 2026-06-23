@@ -15,5 +15,13 @@ int main() {
                 sched.cpu().name.c_str(),
                 sched.total_cycles(),
                 (double)sched.total_cycles() / BUFFER_SIZE);
+    
+    std::printf("\n");
+    sched.print_utilization();
+
+                
+    std::printf("\n--- Schedule (cycle 0..100) ---\n");
+    sched.print_schedule(0, 100);
+
     return 0;
 }

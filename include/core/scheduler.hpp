@@ -61,6 +61,114 @@ public:
         if (c > total_cycles_) total_cycles_ = c;
     }
 
+    
+// 縦方向（サイクルを縦軸、ポートを横軸）に出力する
+    void print_schedule(int start_cycle = 0,
+                        int end_cycle = -1,
+                        std::FILE* out = stdout) const {
+        if (end_cycle < 0) end_cycle = total_cycles_;
+        if (end_cycle > (int)port_schedule_.size())
+            end_cycle = (int)port_schedule_.size();
+
+        constexpr int CELL_WIDTH = 10;       // uops名(9文字) + 区切り1
+        constexpr const char* EMPTY = "    .    ";
+
+        // --- ヘッダ ---
+        std::fprintf(out, "Cycle |");
+        for (int p = 0; p < cpu_.num_ports; ++p) {
+            std::fprintf(out, " %*s%-*d",
+                        (CELL_WIDTH - 5) / 2, "Port",
+                        CELL_WIDTH - (CELL_WIDTH - 5) / 2 - 4, p);
+        }
+        std::fprintf(out, " | SchedQ\n");
+
+        // --- 区切り線 ---
+        std::fprintf(out, "------+");
+        for (int p = 0; p < cpu_.num_ports; ++p) {
+            for (int k = 0; k < CELL_WIDTH + 1; ++k) std::fputc('-', out);
+        }
+        std::fprintf(out, "-+-------\n");
+
+        // --- 各サイクル行 ---
+        for (int c = start_cycle; c < end_cycle; ++c) {
+            std::fprintf(out, "%5d |", c);
+            for (int p = 0; p < cpu_.num_ports; ++p) {
+                if (port_schedule_[c][p].has_value()) {
+                    const auto& op = port_schedule_[c][p].value();
+                    std::fprintf(out, " %s", op.get_name().c_str());
+                } else {
+                    std::fprintf(out, " %s", EMPTY);
+                }
+            }
+            int q = (c < (int)schedq_count_.size()) ? schedq_count_[c] : 0;
+            std::fprintf(out, " | %5d\n", q);
+        }
+        
+        // // 各ポートの使用率
+        // std::fprintf(out, "\n--- Port Utilization ---\n");
+        // for (int p = 0; p < cpu_.num_ports; ++p) {
+        //     int used = 0;
+        //     for (int c = start_cycle; c < end_cycle; ++c) {
+        //         if (port_schedule_[c][p].has_value()) used++;
+        //     }
+        //     double rate = 100.0 * used / (end_cycle - start_cycle);
+        //     std::fprintf(out, "Port%d: %5.1f%% (%d / %d)\n",
+        //                 p, rate, used, end_cycle - start_cycle);
+        // }
+
+    }
+
+    // ポート使用率と SchedQ 占有率を出力
+    // 範囲を指定しなければ 0 ~ total_cycles 全体を集計
+    void print_utilization(int start_cycle = 0,
+                        int end_cycle = -1,
+                        std::FILE* out = stdout) const {
+        if (end_cycle < 0) end_cycle = total_cycles_;
+        if (end_cycle > (int)port_schedule_.size())
+            end_cycle = (int)port_schedule_.size();
+
+        int span = end_cycle - start_cycle;
+        if (span <= 0) {
+            std::fprintf(out, "(empty range)\n");
+            return;
+        }
+
+        std::fprintf(out, "=== Utilization (cycles %d..%d, span=%d) ===\n",
+                    start_cycle, end_cycle, span);
+
+        // --- 各ポートの使用サイクル数 ---
+        int total_used = 0;
+        for (int p = 0; p < cpu_.num_ports; ++p) {
+            int used = 0;
+            for (int c = start_cycle; c < end_cycle; ++c) {
+                if (port_schedule_[c][p].has_value()) used++;
+            }
+            double rate = 100.0 * used / span;
+            std::fprintf(out, "  Port%d : %6.2f%%  (%6d / %d)\n",
+                        p, rate, used, span);
+            total_used += used;
+        }
+
+        // --- 全ポート平均 ---
+        double avg = 100.0 * total_used / (span * cpu_.num_ports);
+        std::fprintf(out, "  -----\n");
+        std::fprintf(out, "  Avg   : %6.2f%%  (%6d / %d)\n",
+                    avg, total_used, span * cpu_.num_ports);
+
+        // --- SchedQ 占有 ---
+        int q_max = 0, q_sum = 0;
+        int q_len = std::min(end_cycle, (int)schedq_count_.size());
+        for (int c = start_cycle; c < q_len; ++c) {
+            q_max = std::max(q_max, schedq_count_[c]);
+            q_sum += schedq_count_[c];
+        }
+        double q_avg = (q_len > start_cycle)
+                        ? (double)q_sum / (q_len - start_cycle)
+                        : 0.0;
+        std::fprintf(out, "  SchedQ: max=%d  avg=%.2f  (capacity=%d)\n",
+                    q_max, q_avg, cpu_.schedq_size);
+    }
+
 private:
     void ensure_schedq_size(int c) {
         if (c >= (int)schedq_count_.size())
