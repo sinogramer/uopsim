@@ -120,14 +120,14 @@ private:
                 if (allowed_ports == 0) {
                     min_cycle = uop_start_cycle;
                 } else {
-                    std::vector<int> port_order;
-                    if (allowed_ports == 0b1111)      port_order = {3, 0, 1, 2};
-                    else if (allowed_ports == 0b1110) port_order = {3, 2, 1};
-                    else {
-                        for (int p = 0; p < cpu.num_ports; ++p)
-                            if ((allowed_ports >> p) & 1)
-                                port_order.push_back(p);
-                    }
+                    std::vector<int> port_order = cpu.port_priority(allowed_ports);
+                    // if (allowed_ports == 0b1111)      port_order = {3, 0, 1, 2};
+                    // else if (allowed_ports == 0b1110) port_order = {3, 2, 1};
+                    // else {
+                    //     for (int p = 0; p < cpu.num_ports; ++p)
+                    //         if ((allowed_ports >> p) & 1)
+                    //             port_order.push_back(p);
+                    // }
 
                     for (int port : port_order) {
                         int cycle = uop_start_cycle;

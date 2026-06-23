@@ -7,4 +7,5 @@ struct CpuModel {
     int dispatch_width;
     int rob_size;
     int schedq_size;
+    std::function<std::vector<int>(uint8_t)> port_priority;
 };
