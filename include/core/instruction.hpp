@@ -1,8 +1,8 @@
 #pragma once
-#include "header.hpp"
-#include "uops.hpp"
-#include "argument.hpp"
-#include "scheduler.hpp"
+#include "core/header.hpp"
+#include "core/uops.hpp"
+#include "core/argument.hpp"
+#include "core/scheduler.hpp"
 
 class instruction {
 public:

@@ -1,7 +1,7 @@
 /*ISAインタフェース*/
 
 #pragma once
-#include "instruction.hpp"
+#include "core/instruction.hpp"
 
 class Isa {
 public:

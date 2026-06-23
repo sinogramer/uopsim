@@ -1,5 +1,5 @@
 #pragma once
-#include "isa.hpp"
+#include "core/isa.hpp"
 
 namespace isa::zen5 {
 

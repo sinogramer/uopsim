@@ -1,7 +1,8 @@
 #pragma once
-#include "header.hpp"
-#include "cpu_model.hpp"
-#include "uops.hpp"
+#include "core/header.hpp"
+#include "core/cpu_model.hpp"
+#include "core/uops.hpp"
+
 
 class Scheduler {
 public:

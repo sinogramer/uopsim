@@ -1,5 +1,5 @@
 #pragma once
-#include "cpu_model.hpp"
+#include "core/cpu_model.hpp"
 
 inline const CpuModel ZEN4 = {
     /* name           */ "Zen4",

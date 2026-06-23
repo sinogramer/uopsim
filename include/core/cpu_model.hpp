@@ -1,5 +1,5 @@
 #pragma once
-#include <header.hpp>
+#include "core/header.hpp"
 
 struct CpuModel {
     std::string name;

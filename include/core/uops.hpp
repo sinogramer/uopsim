@@ -1,6 +1,6 @@
 /*マイクロオペレーションを管理*/
 #pragma once
-#include "header.hpp"
+#include "core/header.hpp"
 
 class uops {
 public:
