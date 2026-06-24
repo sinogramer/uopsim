@@ -10,6 +10,9 @@ public:
     instruction& pslldq()    override { return pslldq_; }
     instruction& psrldq()    override { return psrldq_; }
     instruction& pclmulqdq() override { return pclmulqdq_; }
+    instruction& paddq() override { return paddq_; }
+    instruction& aesenc() override { return aesenc_; }
+    instruction& aesenclast() override { return aesenclast_; }
 
 private:
     instruction pxor_   {{{ uops(1, 0b1111, "  pxor   ") }}};
@@ -24,6 +27,9 @@ private:
         },
         1, "", 2
     };
+    instruction paddq_ {{{ uops(1, 0b1111, "  paddq  ") }}};
+    instruction aesenc_ {{{ uops(4, 0b0011, "  aesenc ") }}};
+    instruction aesenclast_ {{{ uops(4, 0b0011, "aesenlast") }}};
 };
 
 // シングルトン的にアクセスしたい場合
