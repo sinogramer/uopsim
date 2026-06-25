@@ -14,4 +14,8 @@ public:
     virtual instruction& psrldq()    = 0;
     virtual instruction& pclmulqdq() = 0;
 
+    virtual instruction& paddq()      = 0;
+    virtual instruction& aesenc()     = 0;
+    virtual instruction& aesenclast() = 0;
+
 };

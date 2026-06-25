@@ -23,3 +23,6 @@ target_link_libraries(xctr_bench PRIVATE uopsim_core)
 
 add_executable(compare_cpus apps/compare_cpus.cpp)
 target_link_libraries(compare_cpus PRIVATE uopsim_core)
+
+add_executable(xctr_polyval_bench apps/xctr_polyval_bench.cpp)
+target_link_libraries(xctr_polyval_bench PRIVATE uopsim_core)

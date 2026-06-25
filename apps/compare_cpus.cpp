@@ -1,9 +1,9 @@
 #include "core/header.hpp"
 #include "algo/polyval.hpp"
 #include "cpus/zen4.hpp"
-#include "cpus/zen5.hpp"
 #include "isa/zen4_isa.hpp"
-#include "isa/zen5_isa.hpp"
+#include "cpus/sappirerapids.hpp"
+#include "isa/sappirerapids_isa.hpp"
 
 #define BUFFER_SIZE (1024 * 1024)
 
@@ -18,7 +18,7 @@ int main() {
 
     Target targets[] = {
         { "Zen4", ZEN4, isa::zen4::instance() },
-        { "Zen5", ZEN5, isa::zen5::instance() },
+        { "SappireRapids", SR, isa::sr::instance() },
     };
 
     std::printf("=== polyvalx8 ===\n");

@@ -113,7 +113,10 @@ private:
                 int uop_start_cycle =
                     std::max(step_start_cycle, sched.current_dispatch_cycle());
 
-                uint8_t allowed_ports = op.get_allowed_ports() & 0x0F;
+                const uint8_t port_mask = (cpu.num_ports >= 8) ? 0xFF
+                                        : (uint8_t)((1u << cpu.num_ports) - 1);
+                uint8_t allowed_ports = op.get_allowed_ports() & port_mask;
+
                 int min_cycle = -1;
                 int avail_port = -1;
 
@@ -121,13 +124,6 @@ private:
                     min_cycle = uop_start_cycle;
                 } else {
                     std::vector<int> port_order = cpu.port_priority(allowed_ports);
-                    // if (allowed_ports == 0b1111)      port_order = {3, 0, 1, 2};
-                    // else if (allowed_ports == 0b1110) port_order = {3, 2, 1};
-                    // else {
-                    //     for (int p = 0; p < cpu.num_ports; ++p)
-                    //         if ((allowed_ports >> p) & 1)
-                    //             port_order.push_back(p);
-                    // }
 
                     for (int port : port_order) {
                         int cycle = uop_start_cycle;
